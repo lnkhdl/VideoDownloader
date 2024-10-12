@@ -1,8 +1,11 @@
 # Python version used when developing the project
 Python 3.12.1
 
-# pip install pytube
-pytube==15.0.0
+# pip install pytube [depracated]
+# pytube==15.0.0
+
+# pip install pytubefix
+pytubefix==7.1.3
 
 # pip install customtkinter
 customtkinter==5.2.2

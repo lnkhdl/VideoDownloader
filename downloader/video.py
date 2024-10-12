@@ -1,12 +1,14 @@
-from pytube import YouTube, exceptions, StreamQuery
+from pytubefix import YouTube, exceptions, StreamQuery
 from enum import Enum
 import datetime
 import urllib3
 import os
 
+
 class StreamType(Enum):
     AUDIO = "Audio"
     VIDEO = "Video"
+
 
 class Video:
     def __init__(self):
@@ -54,13 +56,13 @@ class Video:
             return self.yt.streams.filter(only_audio=True, file_extension="mp4")
         elif stream_type == StreamType.VIDEO:
             return self.yt.streams.filter(progressive=True, file_extension="mp4")
-    
+
     def download_thumbnail(self, filename: str) -> bool:
         try:
             with open(filename, "wb") as f:
-                f.write(urllib3.request('GET', self.yt.thumbnail_url).data)
+                f.write(urllib3.request("GET", self.yt.thumbnail_url).data)
         except Exception as error:
             print("An exception occurred:", error)
             return False
-        
+
         return True
