@@ -1,5 +1,5 @@
 import argparse
-from app.helpers import get_target_path
+from app.helpers import clear_target_path
 from downloader.video import Video
 from downloader.stream import Stream
 from app.base_app import Application
@@ -25,7 +25,8 @@ start the application without specifying any argument.
         args = parser.parse_args()
         
         self.source_file: str = args.source
-        self.target_path: str = get_target_path(args.directory)
+        self.target_path: str = clear_target_path(args.directory)
+        self.stream.download_path = self.target_path
         self.selected_type: str = args.type
         
     def start(self):
@@ -36,9 +37,9 @@ start the application without specifying any argument.
                     
                     if self.video.process_url(url):
                         if self.selected_type.lower() == "audio":
-                            self.stream.download_audio_only(self.target_path)
+                            self.stream.download_audio_only()
                         else:
-                            self.stream.download_video_best_quality(self.target_path)
+                            self.stream.download_video_best_quality()
                     else:
                         print(f"Wrong URL provided: {url}. Skipping this line.")
         except FileNotFoundError:

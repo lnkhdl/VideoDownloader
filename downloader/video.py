@@ -1,8 +1,12 @@
 from pytube import YouTube, exceptions, StreamQuery
-from typing import Union
+from enum import Enum
 import datetime
 import urllib3
 import os
+
+class StreamType(Enum):
+    AUDIO = "Audio",
+    VIDEO = "Video"
 
 class Video:
     def __init__(self):
@@ -44,13 +48,11 @@ class Video:
 
         return True
 
-    def get_streams(self, stream_type: str) -> Union[None, StreamQuery]:
-        if stream_type == "Audio":
+    def get_streams(self, stream_type: StreamType) -> StreamQuery:
+        if stream_type == StreamType.AUDIO:
             return self.yt.streams.filter(only_audio=True, file_extension="mp4")
-        elif stream_type == "Video":
+        elif stream_type == StreamType.VIDEO:
             return self.yt.streams.filter(progressive=True, file_extension="mp4")
-        else:
-            raise ValueError("Invalid stream type. The supported types are 'Audio' or 'Video'.")
     
     def download_thumbnail(self, filename: str) -> bool:
         try:

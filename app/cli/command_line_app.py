@@ -1,6 +1,6 @@
-from downloader.video import Video
+from downloader.video import StreamType, Video
 from downloader.stream import Stream
-from app.helpers import get_target_path
+from app.helpers import clear_target_path
 from app.base_app import Application
 
 class CommandLineApp(Application):
@@ -44,8 +44,8 @@ class CommandLineApp(Application):
     def ask_which_stream_to_download(self):
         print("\nLoading the available streams. Please wait...")
         
-        stream_ids = self.display_available_streams("Audio", self.video.get_streams("Audio"))
-        stream_ids.extend(self.display_available_streams("Video", self.video.get_streams("Video")))
+        stream_ids = self.display_available_streams(StreamType.AUDIO)
+        stream_ids.extend(self.display_available_streams(StreamType.VIDEO))
                 
         print("\nWhich stream would you like to download? Please insert its ID.")
         selected_stream_id = input()
@@ -60,10 +60,11 @@ class CommandLineApp(Application):
             print("Invalid input. Please enter a valid numberic ID.")
             self.ask_which_stream_to_download()
         
-    def display_available_streams(self, stream_type, streams):
+    def display_available_streams(self, stream_type):
+        streams = self.video.get_streams(stream_type)
         print(f"\nAvailable {stream_type} streams:")
         stream_ids = []
-        for _, stream in enumerate(streams):
+        for stream in streams:
             print(f"ID: {stream.itag}. Average bitrate: {stream.abr}.")
             stream_ids.append(stream.itag)
         return stream_ids            
@@ -72,10 +73,12 @@ class CommandLineApp(Application):
         print("\nPlease specify a path where the file should be saved (or press Enter for the default location):")
         selected_path = input()
         
-        return get_target_path(selected_path)
+        return clear_target_path(selected_path)
 
     def process_download(self, selected_stream_id, target_path):
-        self.stream.download(selected_stream_id, target_path)
+        self.stream.stream_id = selected_stream_id
+        self.stream.download_path = target_path
+        self.stream.download()
         print("\nThe stream has been downloaded.")
         self.ask_if_repeat()
         

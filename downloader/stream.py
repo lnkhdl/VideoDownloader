@@ -5,6 +5,8 @@ import os, re
 class Stream:
     def __init__(self, video: Video):
         self.video = video
+        self.download_path = None
+        self.stream_id = None
     
     def get_download_file_name(self, original_title: str, max_length: int = 50) -> str:
         # Remove special characters, leaving only alphanumeric characters, spaces, and underscores
@@ -13,20 +15,20 @@ class Stream:
         sanitized_title = re.sub(r"_+", "_", sanitized_title)
         return sanitized_title[:max_length].lower()
         
-    def download_audio_only(self, download_path: str) -> None:
-        audio_stream_id = self.video.yt.streams.get_audio_only().itag
-        self.download(audio_stream_id, download_path, "audio_")
+    def download_audio_only(self) -> None:
+        self.stream_id = self.video.yt.streams.get_audio_only().itag
+        self.download("audio_")
     
-    def download_video_best_quality(self, download_path: str) -> None:
-        video_stream_id = self.video.yt.streams.filter(progressive=True).order_by("resolution").desc().first().itag
-        self.download(video_stream_id, download_path, "video_")
+    def download_video_best_quality(self) -> None:
+        self.stream_id = self.video.yt.streams.filter(progressive=True).order_by("resolution").desc().first().itag
+        self.download("video_")
     
-    def download(self, selected_stream_id: int, download_path: str, download_filename_prefix: str = "", download_filename_extension: str = ".mp4") -> None:
+    def download(self, download_filename_prefix: str = "", download_filename_extension: str = ".mp4") -> None:
         print("Downloading started...")
         self.video.yt.register_on_progress_callback(self.on_progress)
-        selected_stream = self.video.yt.streams.get_by_itag(selected_stream_id)
+        selected_stream = self.video.yt.streams.get_by_itag(self.stream_id)
         if selected_stream is not None:
-            download_filename = os.path.join(download_path, download_filename_prefix + self.get_download_file_name(selected_stream.title) + download_filename_extension)
+            download_filename = os.path.join(self.download_path, download_filename_prefix + self.get_download_file_name(selected_stream.title) + download_filename_extension)
             selected_stream.download(filename=download_filename)
             print(f"Download completed. File saved at: {download_filename}")
         else:

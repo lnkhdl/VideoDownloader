@@ -1,15 +1,8 @@
 from downloader.video import Video
 from downloader.stream import Stream
-from app.helpers import get_target_path
 from app.gui.tkinter_frames import UrlEntryFrame, VideoDetailFrame
 from app.base_app import Application
-
 import customtkinter
-
-available_frames = {
-    "UrlEntryFrame": UrlEntryFrame,
-    "VideoDetailFrame": VideoDetailFrame
-}
 
 
 class TkinterApp(Application, customtkinter.CTk):
@@ -23,17 +16,20 @@ class TkinterApp(Application, customtkinter.CTk):
         self.font = customtkinter.CTkFont("Arial", 16)
         self.font_small = customtkinter.CTkFont("Arial", 10)
 
-        # BUTTONS
+        # SIZES
         self.button_width = 80
         self.button_height = 30
+        self.entry_height = 50
+        self.combobox_height = 30
 
         # WINDOW
-        self.geometry("800x500")
+        self.geometry("800x450")
         self.title("YouTube Downloader")
         self.resizable(0, 0)
 
-        # GRID
+        # MAIN GRID
         self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
 
         # FIRST FRAME
         self.current_frame = UrlEntryFrame(self)
