@@ -1,5 +1,6 @@
 from pytubefix import YouTube, exceptions, StreamQuery
 from enum import Enum
+from typing import Dict
 import datetime
 import urllib3
 import os
@@ -56,6 +57,22 @@ class Video:
             return self.yt.streams.filter(only_audio=True, file_extension="mp4")
         elif stream_type == StreamType.VIDEO:
             return self.yt.streams.filter(progressive=True, file_extension="mp4")
+
+    def get_streams_combined(self) -> Dict[str, str]:
+        streams_video = self.get_streams(StreamType.VIDEO)
+        streams_audio = self.get_streams(StreamType.AUDIO)
+
+        streams_dict = {}
+        for streams in [streams_video, streams_audio]:
+            for stream in streams:
+                desc = (
+                    f"Video {stream.abr}"
+                    if stream in streams_video
+                    else f"Audio {stream.abr}"
+                )
+                streams_dict[desc] = stream.itag
+
+        return streams_dict
 
     def download_thumbnail(self, filename: str) -> bool:
         try:

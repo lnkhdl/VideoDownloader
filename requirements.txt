@@ -1,7 +1,7 @@
 # Python version used when developing the project
-Python 3.12.1
+# Python 3.12.1
 
-# pip install pytube [depracated]
+# pip install pytube [deprecated]
 # pytube==15.0.0
 
 # pip install pytubefix
@@ -18,3 +18,13 @@ pillow==10.2.0
 
 # pip install urllib3
 urllib3==2.2.1
+
+# pip install Flask
+Flask==3.0.3
+blinker==1.8.2
+click==8.1.7
+colorama==0.4.6
+itsdangerous==2.2.0
+Jinja2==3.1.4
+MarkupSafe==2.1.5
+Werkzeug==3.0.4

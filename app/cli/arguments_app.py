@@ -1,5 +1,5 @@
 import argparse
-from app.helpers import clear_target_path
+from helpers import clear_target_path
 from downloader.video import Video
 from downloader.stream import Stream
 from app.base_app import Application

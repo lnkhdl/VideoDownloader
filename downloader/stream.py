@@ -1,12 +1,18 @@
 from downloader.video import Video
 from pytubefix import Stream as PytubeStream
+from helpers import get_tmp_download_location
 from pytubefix.cli import on_progress
 import os, re
 
 
 class Stream:
-    def __init__(self, video: Video):
+    def __init__(self, video: Video, mode: str):
         self.video = video
+
+        # Mode is needed for setting the download location
+        # Where to save file is defined by a user in case of cmd, gui and multiple-download
+        # If web is used, the download folder is temporary
+        self.mode = mode
 
         # Location where to save the file, e.g. C:\Users\Videos
         self.download_path = None
@@ -79,13 +85,19 @@ class Stream:
 
         selected_stream = self.video.yt.streams.get_by_itag(self.stream_id)
         if selected_stream is not None:
+            # If web is used, user does not define where to save the file, so tmp is used instead
+            if self.mode == "web":
+                self.download_path = get_tmp_download_location()
+
             # Sets the download filename and location - this is needed per each download, so the name is refreshed
             self.set_download_full_filename(
                 download_filename_prefix,
                 selected_stream.title,
                 download_filename_extension,
             )
+            # It is expected that self.download_path is already set via the user input.
             self.set_download_file(self.download_path, self.download_full_filename)
+            print(f"Download file set to: {self.download_file}")
 
             # Start the download
             selected_stream.download(filename=self.download_file, skip_existing=False)

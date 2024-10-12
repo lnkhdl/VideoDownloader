@@ -1,7 +1,7 @@
 import customtkinter, tkinter, os
 from PIL import Image
 from downloader.video import StreamType
-from app.helpers import clear_target_path
+from helpers import clear_target_path
 from pytubefix import Stream as PytubeStream
 from typing import Optional
 
@@ -177,7 +177,7 @@ class DownloadOptionsFrame(Frame):
         )
         self.label1.grid(row=0, column=0, columnspan=2, pady=20, sticky="nsew")
 
-        self.available_streams = self.get_streams()
+        self.available_streams = self.root.video.get_streams_combined()
         self.selected_stream = customtkinter.StringVar()
         self.combo_streams = customtkinter.CTkComboBox(
             self,
@@ -230,22 +230,6 @@ class DownloadOptionsFrame(Frame):
             command=self.start_download,
         )
         self.button.grid(row=5, column=1, padx=10, pady=(40, 10), sticky="w")
-
-    def get_streams(self):
-        streams_video = self.root.video.get_streams(StreamType.VIDEO)
-        streams_audio = self.root.video.get_streams(StreamType.AUDIO)
-
-        streams_dict = {}
-        for streams in [streams_video, streams_audio]:
-            for stream in streams:
-                desc = (
-                    f"Video {stream.abr}"
-                    if stream in streams_video
-                    else f"Audio {stream.abr}"
-                )
-                streams_dict[desc] = stream.itag
-
-        return streams_dict
 
     def update_path_entry(self, text):
         self.path_entry.delete(0, tkinter.END)

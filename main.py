@@ -3,26 +3,46 @@ from downloader.stream import Stream
 from app.cli.command_line_app import CommandLineApp
 from app.cli.arguments_app import ArgumentsApp
 from app.gui.tkinter_app import TkinterApp
+from app.web.web_app import WebApp
+from helpers import remove_old_tmp_files
 import sys
 
 
 def main():
-    gui_mode = True
+    """
+    Set Mode:
+           arg ... multiple command-line arguments is used
+
+           cmd ... command line mode is started
+           gui ... Tkinter app is started
+           web ... Flask web is started
+    """
+
+    if len(sys.argv) > 1:
+        mode = "arg"
+    else:
+        mode = "web"
 
     video = Video()
-    stream = Stream(video)
+    stream = Stream(video, mode)
     app = None
 
-    # Check if command-line arguments are provided
+    # If command-line arguments are provided, multiple download is triggered
     if len(sys.argv) > 1:
         app = ArgumentsApp(video, stream)
 
-    # No command-line arguments, decide on the application mode
+    # If no command-line arguments are provided, decide which application mode to start
     else:
-        if gui_mode:
-            app = TkinterApp(video, stream)
-        else:
+        if mode == "cmd":
             app = CommandLineApp(video, stream)
+        elif mode == "gui":
+            app = TkinterApp(video, stream)
+        elif mode == "web":
+            remove_old_tmp_files()
+            app = WebApp(video, stream)
+        else:
+            print("Wrong mode selected.")
+            exit()
 
     app.start()
 
