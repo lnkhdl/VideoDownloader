@@ -1,0 +1,5 @@
+# Python version used when developing the project
+Python 3.12.1
+
+# pip install pytube
+pytube==15.0.0
