@@ -54,6 +54,6 @@ python main.py
 ### Screenshots
 Screenshots are available in the `_screenshots` folder.
 
-![GUI](./_screenshots/gui01.png "GUI]")
+![GUI](./_screenshots/gui01.PNG "GUI]")
 
-![WEB](./_screenshots/web01.png "WEB]")
+![WEB](./_screenshots/web01.PNG "WEB]")
