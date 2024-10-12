@@ -3,8 +3,10 @@ from app.helpers import get_target_path
 from downloader.video import Video
 from downloader.stream import Stream
 
-class ArgumentsProcessor:
-    def __init__(self):
+class ArgumentsApp:
+    def __init__(self, video: Video, stream: Stream):
+        self.video = video
+        self.stream = stream
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
             description="""
 ------------------------------------------------------------------------------------------------------------------------------
@@ -21,11 +23,9 @@ start the application without specifying any argument.
         
         args = parser.parse_args()
         
-        self.source_file = args.source
-        self.target_path = get_target_path(args.directory)
-        self.selected_type = args.type
-        
-        self.process_file()
+        self.source_file: str = args.source
+        self.target_path: str = get_target_path(args.directory)
+        self.selected_type: str = args.type
         
     def process_file(self):
         try:
@@ -33,13 +33,11 @@ start the application without specifying any argument.
                 for line in file:
                     url = line.strip()
                     
-                    video = Video()
-                    if video.process_url(url):
-                        stream = Stream(video)
-                        if self.selected_type == "audio":
-                            stream.download_audio_only(self.target_path)
+                    if self.video.process_url(url):
+                        if self.selected_type.lower() == "audio":
+                            self.stream.download_audio_only(self.target_path)
                         else:
-                            stream.download_video_best_quality(self.target_path)
+                            self.stream.download_video_best_quality(self.target_path)
                     else:
                         print(f"Wrong URL provided: {url}. Skipping this line.")
         except FileNotFoundError:

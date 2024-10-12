@@ -1,9 +1,8 @@
 from downloader.video import Video
 from downloader.stream import Stream
 from app.helpers import get_target_path
-import os
 
-class CLI:
+class CommandLineApp:
     def __init__(self, video: Video, stream: Stream):
         self.video = video
         self.stream = stream

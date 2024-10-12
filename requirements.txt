@@ -3,3 +3,15 @@ Python 3.12.1
 
 # pip install pytube
 pytube==15.0.0
+
+# pip install customtkinter
+customtkinter==5.2.2
+darkdetect==0.8.0
+packaging==23.2
+
+# pip install Pillow
+# that is PIP (Python Imaging Library)
+pillow==10.2.0
+
+# pip install urllib3
+urllib3==2.2.1

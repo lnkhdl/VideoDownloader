@@ -1,24 +1,33 @@
 from pytube import YouTube, exceptions, StreamQuery
 from typing import Union
 import datetime
+import urllib3
+import os
 
 class Video:
     def __init__(self):
         self.yt = None
         self._view_count = None
         self._duration = None
+        self._thumbnail = None
 
     @property
     def view_count(self) -> str:
-        if self._view_count is None and self.yt:
-            self._view_count = "{:,d}".format(self.yt.views).replace(",", " ")
+        self._view_count = "{:,d}".format(self.yt.views).replace(",", " ")
         return self._view_count
 
     @property
     def duration(self) -> str:
-        if self._duration is None and self.yt:
-            self._duration = str(datetime.timedelta(seconds=self.yt.length))
+        self._duration = str(datetime.timedelta(seconds=self.yt.length))
         return self._duration
+
+    @property
+    def thumbnail(self) -> str:
+        if self.download_thumbnail("thumbnail.png"):
+            self._thumbnail = "thumbnail.png"
+        else:
+            self._thumbnail = "no_thumbnail.png"
+        return self._thumbnail
 
     def process_url(self, url_entry: str) -> bool:
         try:
@@ -42,3 +51,13 @@ class Video:
             return self.yt.streams.filter(progressive=True, file_extension="mp4")
         else:
             raise ValueError("Invalid stream type. The supported types are 'Audio' or 'Video'.")
+    
+    def download_thumbnail(self, filename: str) -> bool:
+        try:
+            with open(filename, "wb") as f:
+                f.write(urllib3.request('GET', self.yt.thumbnail_url).data)
+        except Exception as error:
+            print("An exception occurred:", error)
+            return False
+        
+        return True
