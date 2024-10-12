@@ -1,5 +1,6 @@
 from downloader.video import Video
 from downloader.stream import Stream
+from app.helpers import get_target_path
 import os
 
 class CLI:
@@ -48,8 +49,8 @@ class CLI:
         selected_stream_id = input()
         try:
             if int(selected_stream_id) in stream_ids:
-                download_path = self.ask_for_download_path()
-                self.process_download(selected_stream_id, download_path)
+                target_path = self.ask_for_download_path()
+                self.process_download(selected_stream_id, target_path)
             else:
                 print("The selected ID is not correct. Please enter a valid numberic ID from the available streams.")
                 self.ask_which_stream_to_download()
@@ -69,24 +70,10 @@ class CLI:
         print("\nPlease specify a path where the file should be saved (or press Enter for the default location):")
         selected_path = input()
         
-        # Use the default path (current working directory) if the user doesn't specify one
-        if not selected_path:
-            path = os.getcwd()
-        else:
-            if not os.path.exists(selected_path):
-                print(f"Error: The specified path '{selected_path}' does not exist.")
-                path = os.getcwd()
-               
-            elif not os.path.isdir(selected_path):
-                print(f"Error: The specified path '{selected_path}' is not a directory.")
-                path = os.getcwd()
-            else:
-                path = selected_path
-        
-        return path
-    
-    def process_download(self, selected_stream_id, download_path):
-        self.stream.download(selected_stream_id, download_path)
+        return get_target_path(selected_path)
+
+    def process_download(self, selected_stream_id, target_path):
+        self.stream.download(selected_stream_id, target_path)
         print("\nThe stream has been downloaded.")
         self.ask_if_repeat()
         
