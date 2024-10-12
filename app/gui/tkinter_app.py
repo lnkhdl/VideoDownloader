@@ -2,6 +2,7 @@ from downloader.video import Video
 from downloader.stream import Stream
 from app.helpers import get_target_path
 from app.gui.tkinter_frames import UrlEntryFrame, VideoDetailFrame
+from app.base_app import Application
 
 import customtkinter
 
@@ -11,12 +12,9 @@ available_frames = {
 }
 
 
-class TkinterApp(customtkinter.CTk):
+class TkinterApp(Application, customtkinter.CTk):
     def __init__(self, video: Video, stream: Stream):
-        super().__init__()
-        
-        self.video = video
-        self.stream = stream
+        super().__init__(video, stream)
         
         self.current_frame = None
         
@@ -43,3 +41,12 @@ class TkinterApp(customtkinter.CTk):
         # STATIC FOOTER
         self.footer = customtkinter.CTkLabel(self, text="2024 @ LNKHDL", text_color="gray", font=self.font_small)
         self.footer.grid(row=1, column=0, padx=40, pady=(0,10), sticky="e")
+    
+    def start(self):
+        # Modes: system, light, dart
+        customtkinter.set_appearance_mode("dark")
+
+        # Themes: blue, dark-blue, green
+        customtkinter.set_default_color_theme("blue")
+
+        self.mainloop()

@@ -2,11 +2,12 @@ import argparse
 from app.helpers import get_target_path
 from downloader.video import Video
 from downloader.stream import Stream
+from app.base_app import Application
 
-class ArgumentsApp:
+class ArgumentsApp(Application):
     def __init__(self, video: Video, stream: Stream):
-        self.video = video
-        self.stream = stream
+        super().__init__(video, stream)
+        
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
             description="""
 ------------------------------------------------------------------------------------------------------------------------------
@@ -27,7 +28,7 @@ start the application without specifying any argument.
         self.target_path: str = get_target_path(args.directory)
         self.selected_type: str = args.type
         
-    def process_file(self):
+    def start(self):
         try:
             with open(self.source_file, "r") as file:
                 for line in file:

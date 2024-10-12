@@ -1,11 +1,14 @@
 from downloader.video import Video
 from downloader.stream import Stream
 from app.helpers import get_target_path
+from app.base_app import Application
 
-class CommandLineApp:
+class CommandLineApp(Application):
     def __init__(self, video: Video, stream: Stream):
-        self.video = video
-        self.stream = stream
+        super().__init__(video, stream)
+        
+    def start(self):
+        self.ask_for_video_url()
     
     def ask_for_video_url(self, message=None):
         if message is not None:

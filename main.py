@@ -3,34 +3,27 @@ from downloader.stream import Stream
 from app.cli.command_line_app import CommandLineApp
 from app.cli.arguments_app import ArgumentsApp
 from app.gui.tkinter_app import TkinterApp
-import sys, customtkinter
+import sys
 
 def main():
-    gui: bool = True
+    gui_mode = True
     
     video = Video()
     stream = Stream(video)
-    processor = None
+    app = None
     
-    # arguments provided
+    # Check if command-line arguments are provided
     if len(sys.argv) > 1:
-        processor = ArgumentsApp(video, stream)
-        processor.process_file()
+        app = ArgumentsApp(video, stream)
     
-    # only main file is called
+    # No command-line arguments, decide on the application mode
     else:
-        if gui:
-            processor = TkinterApp(video, stream)
-            # Modes: system, light, dart
-            customtkinter.set_appearance_mode("dark")
-
-            # Themes: blue, dark-blue, green
-            customtkinter.set_default_color_theme("blue")
-
-            processor.mainloop()
+        if gui_mode:
+            app = TkinterApp(video, stream)
         else:
-            processor = CommandLineApp(video, stream)
-            processor.ask_for_video_url()
+            app = CommandLineApp(video, stream)
+    
+    app.start()
 
 if __name__ == "__main__":
     main()
