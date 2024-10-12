@@ -5,7 +5,7 @@ import urllib3
 import os
 
 class StreamType(Enum):
-    AUDIO = "Audio",
+    AUDIO = "Audio"
     VIDEO = "Video"
 
 class Video:
@@ -49,6 +49,7 @@ class Video:
         return True
 
     def get_streams(self, stream_type: StreamType) -> StreamQuery:
+        # PyTube bug related to Age restriction: https://github.com/pytube/pytube/issues/1712
         if stream_type == StreamType.AUDIO:
             return self.yt.streams.filter(only_audio=True, file_extension="mp4")
         elif stream_type == StreamType.VIDEO:

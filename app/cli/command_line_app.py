@@ -60,9 +60,9 @@ class CommandLineApp(Application):
             print("Invalid input. Please enter a valid numberic ID.")
             self.ask_which_stream_to_download()
         
-    def display_available_streams(self, stream_type):
+    def display_available_streams(self, stream_type: StreamType):
         streams = self.video.get_streams(stream_type)
-        print(f"\nAvailable {stream_type} streams:")
+        print(f"\nAvailable {stream_type.value} streams:")
         stream_ids = []
         for stream in streams:
             print(f"ID: {stream.itag}. Average bitrate: {stream.abr}.")

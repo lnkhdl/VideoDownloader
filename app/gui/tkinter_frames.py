@@ -2,6 +2,8 @@ import customtkinter, tkinter, os
 from PIL import Image
 from downloader.video import StreamType
 from app.helpers import clear_target_path
+from pytube import Stream as PytubeStream
+from typing import Optional
 
 class Frame(customtkinter.CTkFrame):
     def __init__(self, root):
@@ -26,7 +28,7 @@ class UrlEntryFrame(Frame):
 
         # Header
         self.label = customtkinter.CTkLabel(self, width=700, text="Insert a YouTube link:", font=self.root.font_header)
-        self.label.grid(row=0, column=0, padx=10, pady=(20,40))
+        self.label.grid(row=0, column=0, padx=10, pady=(40))
 
         # Error when URL is incorrect
         self.error = customtkinter.CTkLabel(self, text="Wrong link! Please correct it and try again.", text_color="red", font=self.root.font)
@@ -171,14 +173,48 @@ class DownloadFrame(Frame):
         super().__init__(root)
         self.remove_current()
         self.create_widgets()
-    
+        
+        self.root.stream.set_progress_callback(self.show_progress_bar)
+        self.root.stream.set_complete_callback(self.show_widgets_after_download)
+        self.root.stream.download()       
+
     def create_widgets(self):
         self.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
-        #self.grid_rowconfigure((0,1,2,3,4,5,6,7), weight=0)
         self.grid_columnconfigure((0,1), weight=1)
- 
-        self.label1 = customtkinter.CTkLabel(self, text=self.root.stream.download_path, font=self.root.font_header)
-        self.label1.grid(row=0, column=0, columnspan=2, pady=20, sticky="nsew")
         
-        self.label2 = customtkinter.CTkLabel(self, text=self.root.stream.stream_id, font=self.root.font_header)
-        self.label2.grid(row=2, column=0, columnspan=2, pady=20, sticky="nsew")
+        self.label1 = customtkinter.CTkLabel(self, text="Download progress", font=self.root.font_header)
+        self.label1.grid(row=0, column=0, columnspan=2, pady=20, sticky="nsew")
+               
+        self.percentage = customtkinter.CTkLabel(self, text="0 %", font=self.root.font)
+        self.percentage.grid(row=1, column=0, columnspan=2, pady=10, sticky="nsew")
+        
+        self.progress = customtkinter.CTkProgressBar(self, height=30)
+        self.progress.set(0)
+        self.progress.grid(row=2, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+    
+    def show_progress_bar(self, stream: PytubeStream, chunk: bytes, bytes_remaining: int) -> None:
+        total_size = stream.filesize
+        bytes_downloaded = total_size - bytes_remaining
+        completion = bytes_downloaded / total_size
+        self.percentage.configure(text=f"{int(completion*100)}%")
+        self.percentage.update()
+        self.progress.set(completion)
+    
+    def show_widgets_after_download(self, stream: PytubeStream, file_path: Optional[str]):
+        self.percentage.configure(text="The stream has been downloaded.")
+        
+        self.location = customtkinter.CTkLabel(self, text=self.root.stream.download_path, font=self.root.font, wraplength=600)
+        self.location.grid(row=3, column=0, columnspan=2, pady=(10,5), sticky="nsew")
+        self.location = customtkinter.CTkLabel(self, text=self.root.stream.download_full_filename, font=self.root.font, wraplength=600)
+        self.location.grid(row=4, column=0, columnspan=2, pady=(5,20), sticky="nsew")
+        
+        self.button_back = customtkinter.CTkButton(self, width=self.root.button_width, height=self.root.button_height, text="Back", font=self.root.font, command=self.back_to_download_options)
+        self.button_back.grid(row=5, column=0, padx=10, pady=(40,10), sticky="e")
+        self.button = customtkinter.CTkButton(self, width=self.root.button_width, height=self.root.button_height, text="Submit new YT link", font=self.root.font, command=self.new_link)
+        self.button.grid(row=5, column=1, padx=10, pady=(40,10), sticky="w")
+    
+    def new_link(self):
+        self.root.current_frame = UrlEntryFrame(self.root)
+
+    def back_to_download_options(self):
+        self.root.current_frame = DownloadOptionsFrame(self.root)

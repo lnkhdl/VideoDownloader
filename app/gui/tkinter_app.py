@@ -1,6 +1,6 @@
 from downloader.video import Video
 from downloader.stream import Stream
-from app.gui.tkinter_frames import UrlEntryFrame, VideoDetailFrame
+from app.gui.tkinter_frames import UrlEntryFrame, DownloadFrame
 from app.base_app import Application
 import customtkinter
 
