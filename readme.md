@@ -31,12 +31,12 @@ python main.py -s C:\my_files\yt_links.txt -t audio -d C:\my_files\downloads\aud
 - The CLI mode allows users to run the program directly from the terminal.
 - In main.py, set the mode to `cmd`.
   
-#### 3. Graphical User Interface (Tkinter)
-- The GUI version of the downloader uses Tkinter, a built-in Python library for creating desktop applications.
+#### 3. Desktop Application (Tkinter)
+- The GUI version of the downloader uses Tkinter.
 - Users can input the video URL in a window-based interface.
 - In main.py, set the mode to `gui`.
 
-#### 4. Graphical User Interface (Tkinter)
+#### 4. Web Application (Flask and Bootstrap)
 - The Flask-based web version allows the downloader to run as a web app.
 - Users can input the URL in a web form and download the video through the browser.
 - In main.py, set the mode to `web`.
